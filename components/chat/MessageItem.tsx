@@ -83,7 +83,7 @@ export function MessageItem({
     >
       {/* Avatar */}
       {!isOwn && (
-        <Avatar className="h-7 w-7 flex-shrink-0 self-end mb-1">
+        <Avatar className="h-7 w-7 shrink-0 self-end mb-1">
           <AvatarImage src={sender?.imageUrl ?? ""} />
           <AvatarFallback className="text-xs">
             {sender?.name[0]?.toUpperCase() ?? "?"}
@@ -100,46 +100,48 @@ export function MessageItem({
         )}
 
         {/* Bubble + actions */}
-        <div className={cn("flex items-end gap-1.5", isOwn ? "flex-row-reverse" : "flex-row")}>
-          {/* Emoji picker trigger (hidden, shown on hover) */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
-            <button
-              onClick={() => setShowEmojiPicker((v) => !v)}
-              className="p-1 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600"
-            >
-              <Smile className="h-3.5 w-3.5" />
-            </button>
-            {isOwn && !isDeleted && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600">
-                    <MoreHorizontal className="h-3.5 w-3.5" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align={isOwn ? "end" : "start"}>
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    className="text-red-600 focus:text-red-600"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete message
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
+        <div className={cn("relative flex items-end gap-1.5", isOwn ? "flex-row-reverse" : "flex-row")}>
+          {/* Action buttons (shown on hover, hidden for deleted) */}
+          {!isDeleted && (
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+              <button
+                onClick={() => setShowEmojiPicker((v) => !v)}
+                className="p-1 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600"
+              >
+                <Smile className="h-3.5 w-3.5" />
+              </button>
+              {isOwn && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-1 rounded-full hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600">
+                      <MoreHorizontal className="h-3.5 w-3.5" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={isOwn ? "end" : "start"}>
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      className="text-red-600 focus:text-red-600"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete message
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
+          )}
 
-          {/* Emoji picker */}
+          {/* Emoji picker floating panel */}
           {showEmojiPicker && (
             <div className={cn(
-              "absolute z-10 flex gap-1 p-1.5 rounded-full bg-white border border-zinc-200 shadow-lg",
-              isOwn ? "right-12" : "left-12"
+              "absolute bottom-8 z-20 flex gap-1 p-1.5 rounded-full bg-white border border-zinc-200 shadow-lg",
+              isOwn ? "right-0" : "left-0"
             )}>
               {EMOJIS.map((emoji) => (
                 <button
                   key={emoji}
                   onClick={() => handleReaction(emoji)}
-                  className="text-lg hover:scale-125 transition-transform"
+                  className="text-lg hover:scale-125 transition-transform leading-none"
                 >
                   {emoji}
                 </button>
@@ -150,24 +152,24 @@ export function MessageItem({
           {/* Message bubble */}
           <div
             className={cn(
-              "relative rounded-2xl px-3.5 py-2 text-sm",
+              "rounded-2xl px-3.5 py-2 text-sm",
               isOwn
                 ? "bg-blue-600 text-white rounded-br-sm"
                 : "bg-zinc-100 text-zinc-900 rounded-bl-sm"
             )}
           >
             {isDeleted ? (
-              <span className="italic text-opacity-70">
+              <span className={cn("italic", isOwn ? "text-white/60" : "text-zinc-400")}>
                 {isOwn ? "You deleted this message" : "This message was deleted"}
               </span>
             ) : (
-              <span className="whitespace-pre-wrap break-words">{content}</span>
+              <span className="whitespace-pre-wrap wrap-break-word">{content}</span>
             )}
           </div>
         </div>
 
-        {/* Reactions */}
-        {Object.keys(reactionGroups).length > 0 && (
+        {/* Reactions (not shown for deleted messages) */}
+        {!isDeleted && Object.keys(reactionGroups).length > 0 && (
           <div className={cn("flex flex-wrap gap-1 mt-1", isOwn ? "justify-end" : "justify-start")}>
             {Object.entries(reactionGroups).map(([emoji, { count, mine }]) => (
               <button
