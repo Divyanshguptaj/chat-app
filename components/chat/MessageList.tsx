@@ -111,8 +111,11 @@ export function MessageList({
               content={msg.content}
               isDeleted={msg.isDeleted}
               createdAt={msg._creationTime}
-              sender={msg.sender as MessageItemProps_sender | null}
-              reactions={msg.reactions ?? []}
+              // Convex returns enriched data – cast to expected shape
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              sender={msg.sender as any}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              reactions={(msg.reactions ?? []) as any}
               isOwn={msg.senderId === currentUserId}
               showSenderName={showSenderName}
               currentUserId={currentUserId}
@@ -142,10 +145,3 @@ export function MessageList({
     </div>
   );
 }
-
-// Helper type (kept here to avoid extra file)
-type MessageItemProps_sender = {
-  _id: Id<"users">;
-  name: string;
-  imageUrl: string;
-};

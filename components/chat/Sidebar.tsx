@@ -9,7 +9,6 @@ import { UserSearch } from "./UserSearch";
 import { NewGroupDialog } from "./NewGroupDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { OnlineIndicator } from "./OnlineIndicator";
-import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
 import { MessageSquare, Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -37,7 +36,7 @@ export function Sidebar() {
         </div>
         <div className="flex items-center gap-1">
           <NewGroupDialog />
-          <UserButton afterSignOutUrl="/sign-in" />
+          <UserButton />
         </div>
       </div>
 
@@ -88,12 +87,8 @@ export function Sidebar() {
                 conversationId={conv._id as Id<"conversations">}
                 isGroup={conv.isGroup}
                 groupName={conv.groupName}
-                otherParticipants={conv.otherParticipants as Array<{
-                  _id: Id<"users">;
-                  name: string;
-                  imageUrl: string;
-                  lastSeen: number;
-                }>}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                otherParticipants={conv.otherParticipants as any}
                 lastMessageTime={conv.lastMessageTime}
                 lastMessagePreview={conv.lastMessagePreview}
                 currentUserId={convexUser!._id}

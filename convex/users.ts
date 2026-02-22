@@ -80,6 +80,6 @@ export const getManyByIds = query({
   args: { userIds: v.array(v.id("users")) },
   handler: async (ctx, args) => {
     const users = await Promise.all(args.userIds.map((id) => ctx.db.get(id)));
-    return users.filter(Boolean);
+    return users.filter((u): u is NonNullable<typeof u> => u !== null);
   },
 });

@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "convex": "convex dev",
+    "convex:deploy": "convex deploy"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.1",
