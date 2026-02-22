@@ -1,7 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        // Clerk profile images
+        protocol: "https",
+        hostname: "img.clerk.com",
+      },
+      {
+        // Clerk legacy images
+        protocol: "https",
+        hostname: "images.clerk.dev",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

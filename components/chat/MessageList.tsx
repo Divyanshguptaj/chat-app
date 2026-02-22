@@ -6,8 +6,9 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { MessageItem } from "./MessageItem";
 import { TypingIndicator } from "./TypingIndicator";
-import { Loader2, MessageSquare, ChevronDown } from "lucide-react";
+import { MessageSquare, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface MessageListProps {
   conversationId: Id<"conversations">;
@@ -72,8 +73,22 @@ export function MessageList({
 
   if (messages === undefined) {
     return (
-      <div className="flex flex-1 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      <div className="flex-1 overflow-y-auto py-4 px-4 space-y-4">
+        {/* Skeleton message bubbles – alternating own / other */}
+        {[false, true, false, false, true, false].map((isOwn, i) => (
+          <div
+            key={i}
+            className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+          >
+            {!isOwn && <Skeleton className="h-7 w-7 rounded-full shrink-0" />}
+            <div className={`flex flex-col gap-1 max-w-[60%] ${isOwn ? "items-end" : "items-start"}`}>
+              <Skeleton
+                className={`h-9 rounded-2xl ${isOwn ? "rounded-br-sm w-48" : "rounded-bl-sm w-36"}`}
+              />
+              <Skeleton className="h-2.5 w-12 rounded" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
